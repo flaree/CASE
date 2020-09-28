@@ -89,7 +89,7 @@ class Verify(commands.Cog):
 
             # welcome messages for users
 
-            await mod.send(f"User {user.name} joined the server!", allowed_mentions=discord.AllowedMentions(here=True))
+            await mod.send(f"User {user.name} joined the server!")
             await general.send(random.choice(greeting_msgs).format(name=user.name))
 
         else:
