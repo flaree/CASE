@@ -1,6 +1,9 @@
 import aiosmtplib
 from email.message import EmailMessage
 from redbot.core import Config, commands
+from redbot.core.utils.predicates import MessagePredicate
+
+import asyncio
 import secrets
 import discord
 import random
