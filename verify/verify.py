@@ -83,7 +83,7 @@ class Verify(commands.Cog):
 
             # Set user nickname to real name if not already there
 
-            user_email = self.config.user(ctx.author).email()
+            user_email = await self.config.user(ctx.author).email()
             first_name = user_email.split(".")[0]
 
             if first_name.lower() not in user.display_name.lower():
