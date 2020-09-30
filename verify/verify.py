@@ -9,16 +9,20 @@ import secrets
 import discord
 import random
 
+
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(l), n):
         yield l[i : i + n]
 
+
 class Verify(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=95932766180343808, force_registration=True)
-        self.config.register_global(username=None, password=None, verified_emails=[], welcome_messages=[])
+        self.config.register_global(
+            username=None, password=None, verified_emails=[], welcome_messages=[]
+        )
         self.config.register_user(code=None, verified=False, email=None, verified_by=None)
 
     @commands.command()
@@ -84,7 +88,9 @@ class Verify(commands.Cog):
             guild = self.bot.get_guild(713522800081764392)
             role = guild.get_role(713538570824187968)
             user = guild.get_member(ctx.author.id)
-            mod, general = self.bot.get_channel(713522800081764395), self.bot.get_channel(713524886840279042)
+            mod, general = self.bot.get_channel(713522800081764395), self.bot.get_channel(
+                713524886840279042
+            )
             greeting_msgs = await self.config.welcome_messages()
 
             # Set user nickname to real name if not already there
@@ -101,8 +107,13 @@ class Verify(commands.Cog):
                 role,
                 reason=f"Automatically verified - Email: {user_email}",
             )
-            await ctx.send("Your account has been verified! Head over to <#713791953589764156> to set your course/year!")
-            await mod.send(f"User <@{user.id}> joined the server!", allowed_mentions=discord.AllowedMentions(everyone=True))
+            await ctx.send(
+                "Your account has been verified! Head over to <#713791953589764156> to set your course/year!"
+            )
+            await mod.send(
+                f"User <@{user.id}> joined the server!",
+                allowed_mentions=discord.AllowedMentions(everyone=True),
+            )
             await general.send(random.choice(greeting_msgs).format(name=f"<@{user.id}>"))
 
         else:
@@ -121,8 +132,7 @@ class Verify(commands.Cog):
         guild = self.bot.get_guild(713522800081764392)
         channel = guild.get_channel(713522800081764395)
         embed = discord.Embed(description=message, colour=discord.Color.red())
-        embed.set_author(
-            name=f"{ctx.author} | {ctx.author.id}", icon_url=ctx.author.avatar_url)
+        embed.set_author(name=f"{ctx.author} | {ctx.author.id}", icon_url=ctx.author.avatar_url)
         await channel.send(embed=embed)
         await ctx.send("Your verification request has been sent.")
 
@@ -133,8 +143,10 @@ class Verify(commands.Cog):
         if ctx.guild.id != 713522800081764392:
             await ctx.send("This must be used in the CASE++ server.")
         if type.lower() == "external":
-            roles = [ctx.guild.get_role(
-                713538609017258025), ctx.guild.get_role(713538570824187968)]
+            roles = [
+                ctx.guild.get_role(713538609017258025),
+                ctx.guild.get_role(713538570824187968),
+            ]
         elif type.lower() == "internal":
             roles = [ctx.guild.get_role(713538570824187968)]
         else:
@@ -196,10 +208,16 @@ class Verify(commands.Cog):
         """Add welcome message strings to existing list"""
 
         if "{name}" not in msgtoadd:
-            await ctx.send("String must contain the phrase '{name}' to format in place of the users' username.")
+            await ctx.send(
+                "String must contain the phrase '{name}' to format in place of the users' username."
+            )
             return
 
-        await ctx.send("Please confirm that the greeting message is valid with a 'yes' or 'no': \n\n{}".format(msgtoadd))
+        await ctx.send(
+            "Please confirm that the greeting message is valid with a 'yes' or 'no': \n\n{}".format(
+                msgtoadd
+            )
+        )
         try:
             pred = MessagePredicate.yes_or_no(ctx, user=ctx.author)
             await ctx.bot.wait_for("message", check=pred, timeout=20)
@@ -214,7 +232,7 @@ class Verify(commands.Cog):
             await ctx.send("Appended greeting message to existing list successfully!")
         else:
             await ctx.send("Operation cancelled.")
-    
+
     @commands.command()
     @commands.admin()
     async def listmessages(self, ctx):
@@ -246,4 +264,3 @@ class Verify(commands.Cog):
                 return await ctx.send("Not a valid ID!")
             msgs.pop(index)
             await ctx.tick()
-
