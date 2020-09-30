@@ -2,11 +2,17 @@ import aiosmtplib
 from email.message import EmailMessage
 from redbot.core import Config, commands
 from redbot.core.utils.predicates import MessagePredicate
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 import asyncio
 import secrets
 import discord
 import random
+
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i : i + n]
 
 class Verify(commands.Cog):
     def __init__(self, bot):
@@ -208,4 +214,36 @@ class Verify(commands.Cog):
             await ctx.send("Appended greeting message to existing list successfully!")
         else:
             await ctx.send("Operation cancelled.")
+    
+    @commands.command()
+    @commands.admin()
+    async def listmessages(self, ctx):
+        """List welcome messages."""
+        msgs = await self.config.welcome_messages()
+        if not msgs:
+            return await ctx.send("No custom responses available.")
+        a = chunks(msgs, 10)
+        embeds = []
+        i = 0
+        for item in a:
+            items = []
+            for strings in item:
+                items.append(f"Reply {i}: {strings}")
+                i += 1
+            embed = discord.Embed(colour=discord.Color.red(), description="\n".join(items))
+            embeds.append(embed)
+        if len(embeds) == 1:
+            await ctx.send(embed=embeds[0])
+        else:
+            await menu(ctx, embeds, DEFAULT_CONTROLS)
+
+    @commands.command()
+    @commands.admin()
+    async def removemessage(self, ctx, index: int):
+        """Remove a message by reply ID"""
+        async with self.config.welcome_messages() as msgs:
+            if index + 1 > len(msgs):
+                return await ctx.send("Not a valid ID!")
+            msgs.pop(index)
+            await ctx.tick()
 
