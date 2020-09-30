@@ -81,14 +81,21 @@ class Verify(commands.Cog):
             mod, general = self.bot.get_channel(713522800081764395), self.bot.get_channel(713524886840279042)
             greeting_msgs = await self.config.welcome_messages()
 
+            # Set user nickname to real name if not already there
+
+            user_email = self.config.user(ctx.author).email()
+            first_name = user_email.split(".")[0]
+
+            if first_name.lower() not in user.display_name.lower():
+                await user.edit(nick=first_name.title())
+
+            # Add roles and greet
+
             await user.add_roles(
                 role,
-                reason=f"Automatically verified - Email: {await self.config.user(ctx.author).email()}",
+                reason=f"Automatically verified - Email: {user_email}",
             )
             await ctx.send("Your account has been verified! Head over to <#713791953589764156> to set your course/year!")
-
-            # welcome messages for users
-
             await mod.send(f"User <@{user.id}> joined the server!", allowed_mentions=discord.AllowedMentions(everyone=True))
             await general.send(random.choice(greeting_msgs).format(name=f"<@{user.id}>"))
 
