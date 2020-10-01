@@ -49,6 +49,9 @@ class Verify(commands.Cog):
     @commands.dm_only()
     async def verify_email(self, ctx, email: str):
         """Verify your DCU email"""
+        if email.lower().endswith("@dcu.ie"):
+            await (self.bot.get_channel(713522800081764395)).send(f"A user with the email {email} has tried to verify and can potentionally be a staff member.")
+            return await ctx.send("An error occured trying to verify your account. This error has been raised to the mod team.")
         if not email.lower().endswith("@mail.dcu.ie"):
             return await ctx.send("This doesn't seem to be a valid DCU email.")
         if await self.config.user(ctx.author).verified():
