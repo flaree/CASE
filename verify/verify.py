@@ -100,9 +100,11 @@ class Verify(commands.Cog):
 
             user_email = await self.config.user(ctx.author).email()
             first_name = user_email.split(".")[0]
+            name_len = 32 - len(f" ({first_name})")
+            name = user.display_name[:name_len] + f" ({first_name.title()})"
 
             if first_name.lower() not in user.display_name.lower():
-                await user.edit(nick=first_name.title())
+                await user.edit(nick=name)
 
             # Add roles and greet
 
