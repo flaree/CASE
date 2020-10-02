@@ -1,10 +1,12 @@
 import aiosmtplib
 from email.message import EmailMessage
 from redbot.core import Config, commands
+from redbot.core.data_manager import bundled_data_path, cog_data_path
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 import asyncio
+import json
 import secrets
 import discord
 import random
@@ -24,6 +26,23 @@ class Verify(commands.Cog):
             username=None, password=None, verified_emails=[], welcome_messages=[]
         )
         self.config.register_user(code=None, verified=False, email=None, verified_by=None)
+        self._init_task = self.bot.loop.create_task(self.initialize())
+
+    async def initialize(self):
+        """This will load all the bundled data into respective variables."""
+        await self.bot.wait_until_red_ready()
+        guild = self.bot.get_guild(713522800081764392)
+        self.roles = {
+            "case4": guild.get_role(713541535085494312),
+            "case3": guild.get_role(713541403904442438),
+            "case2": guild.get_role(713539660936118282),
+            "ca": guild.get_role(713538655817564250),
+            "case": guild.get_role(713538335984975943),
+        }
+
+    def cog_unload(self):
+        if self._init_task:
+            self._init_task.cancel()
 
     @commands.command()
     @commands.admin()
@@ -50,8 +69,12 @@ class Verify(commands.Cog):
     async def verify_email(self, ctx, email: str):
         """Verify your DCU email"""
         if email.lower().endswith("@dcu.ie"):
-            await (self.bot.get_channel(713522800081764395)).send(f"A user with the email {email} has tried to verify and can potentionally be a staff member.")
-            return await ctx.send("An error occured trying to verify your account. This error has been raised to the mod team.")
+            await (self.bot.get_channel(713522800081764395)).send(
+                f"A user with the email {email} has tried to verify and can potentionally be a staff member."
+            )
+            return await ctx.send(
+                "An error occured trying to verify your account. This error has been raised to the mod team."
+            )
         if not email.lower().endswith("@mail.dcu.ie"):
             return await ctx.send("This doesn't seem to be a valid DCU email.")
         if await self.config.user(ctx.author).verified():
@@ -84,10 +107,12 @@ class Verify(commands.Cog):
             )
             return
         if code == usercode:
+            roles = []
             verified = await self.config.user(ctx.author).verified.set(True)
             await self.config.user(ctx.author).verified_by.set("System")
+            email = await self.config.user(ctx.author).email()
             async with self.config.verified_emails() as emails:
-                emails.append(await self.config.user(ctx.author).email())
+                emails.append(email)
             guild = self.bot.get_guild(713522800081764392)
             role = guild.get_role(713538570824187968)
             user = guild.get_member(ctx.author.id)
@@ -105,15 +130,37 @@ class Verify(commands.Cog):
 
             if first_name.lower() not in user.display_name.lower():
                 await user.edit(nick=name)
+            roles.append(role)
+
+            # Check a private cog with student data.
+            cog = self.bot.get_cog("Students")
+            rolemsg = ""
+            if cog is not None:
+                if email.lower() in cog.students["ca"]:
+                    rolemsg = "We've automatically determined you as a CA1 student. If this is an error, you can correct this by assigning the correct role in <#713791953589764156>!"
+                    roles.append(self.roles["ca"])
+                    roles.append(self.roles["case"])
+                elif email.lower() in cog.students["case2"]:
+                    rolemsg = "We've automatically determined you as a CASE2 student. If this is an error, you can correct this by assigning the correct role in <#713791953589764156>!"
+                    roles.append(self.roles["case2"])
+                    roles.append(self.roles["case"])
+                elif email.lower() in cog.students["case3"]:
+                    rolemsg = "We've automatically determined you as a CASE3 student. If this is an error, you can correct this by assigning the correct role in <#713791953589764156>!"
+                    roles.append(self.roles["case3"])
+                    roles.append(self.roles["case"])
+                elif email.lower() in cog.students["case4"]:
+                    rolemsg = "We've automatically determined you as a CASE4 student. If this is an error, you can correct this by assigning the correct role in <#713791953589764156>!"
+                    roles.append(self.roles["case4"])
+                    roles.append(self.roles["case"])
 
             # Add roles and greet
 
             await user.add_roles(
-                role,
+                *roles,
                 reason=f"Automatically verified - Email: {user_email}",
             )
             await ctx.send(
-                "Your account has been verified! Head over to <#713791953589764156> to set your course/year!"
+                f"Your account has been verified! Head over to <#713791953589764156> to set your course/year!\n{rolemsg}"
             )
             await mod.send(
                 f"User <@{user.id}> joined the server!",
