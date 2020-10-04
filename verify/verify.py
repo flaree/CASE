@@ -140,19 +140,19 @@ class Verify(commands.Cog):
             rolemsg = ""
             if cog is not None:
                 if email.lower() in cog.students["ca"]:
-                    rolemsg = "We've automatically determined you as a CA1 student. If this is an error, you can correct this by assigning the correct role in <#713791953589764156>!"
+                    rolemsg = "We've automatically determined you as a CA1 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["ca"])
                     roles.append(self.roles["case"])
                 elif email.lower() in cog.students["case2"]:
-                    rolemsg = "We've automatically determined you as a CASE2 student. If this is an error, you can correct this by assigning the correct role in <#713791953589764156>!"
+                    rolemsg = "We've automatically determined you as a CASE2 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case2"])
                     roles.append(self.roles["case"])
                 elif email.lower() in cog.students["case3"]:
-                    rolemsg = "We've automatically determined you as a CASE3 student. If this is an error, you can correct this by assigning the correct role in <#713791953589764156>!"
+                    rolemsg = "We've automatically determined you as a CASE3 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case3"])
                     roles.append(self.roles["case"])
                 elif email.lower() in cog.students["case4"]:
-                    rolemsg = "We've automatically determined you as a CASE4 student. If this is an error, you can correct this by assigning the correct role in <#713791953589764156>!"
+                    rolemsg = "We've automatically determined you as a CASE4 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case4"])
                     roles.append(self.roles["case"])
 
