@@ -163,7 +163,7 @@ class Verify(commands.Cog):
                 reason=f"Automatically verified - Email: {user_email}",
             )
             await ctx.send(
-                f"Your account has been verified! Head over to <#713791953589764156> to set your course/year!\n{rolemsg}"
+                f"Your account has been verified!\n{rolemsg}"
             )
             await mod.send(
                 f"User <@{user.id}> joined the server!",
