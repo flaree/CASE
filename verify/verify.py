@@ -176,10 +176,10 @@ class Verify(commands.Cog):
                 "That code doesn't match the one sent via the email. Try again or request a new code."
             )
 
-    @verify.command(name="external")
+    @verify.command(name="other")
     @commands.dm_only()
-    async def verify_external(self, ctx, *, message: str):
-        """Verification process for external members."""
+    async def verify_other(self, ctx, *, message: str):
+        """Verification process for external/alumni members."""
         verified = await self.config.user(ctx.author).verified()
         if verified:
             await ctx.send("You are already verified.")
@@ -194,7 +194,8 @@ class Verify(commands.Cog):
     @verify.command()
     @commands.admin()
     async def user(self, ctx, type: str, *, user: discord.Member):
-        """Verify a user"""
+        """Verify a user.
+        Valid types are internal, external and alumni."""
         if ctx.guild.id != 713522800081764392:
             await ctx.send("This must be used in the CASE++ server.")
         if type.lower() == "external":
@@ -204,6 +205,8 @@ class Verify(commands.Cog):
             ]
         elif type.lower() == "internal":
             roles = [ctx.guild.get_role(713538570824187968)]
+        elif type.lower() == "alumni":
+            roles = [ctx.guild.get_role(713538175456247828)]
         else:
             await ctx.send("Type must be internal or external.")
             return
