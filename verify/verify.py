@@ -70,7 +70,7 @@ class Verify(commands.Cog):
         """Verify your DCU email"""
         if email.lower().endswith("@dcu.ie"):
             await (self.bot.get_channel(713522800081764395)).send(
-                f"A user with the email {email} has tried to verify and can potentionally be a staff member."
+                f"{ctx.author} with the email {email} has tried to verify and can potentionally be a staff member."
             )
             return await ctx.send(
                 "An error occured trying to verify your account. This error has been raised to the mod team."
@@ -79,6 +79,9 @@ class Verify(commands.Cog):
             return await ctx.send("This doesn't seem to be a valid DCU email.")
         if await self.config.user(ctx.author).verified():
             await ctx.send("You have already been verified.")
+            await (self.bot.get_channel(713522800081764395)).send(
+                f"{ctx.author} with the email {email} has tried to verify with an email that has already been verified."
+            )
             return
         emails = await self.config.verified_emails()
         if email in emails:
