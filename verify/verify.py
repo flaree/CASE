@@ -137,7 +137,7 @@ class Verify(commands.Cog):
 
             # Check a private cog with student data.
             cog = self.bot.get_cog("Students")
-            rolemsg = ""
+            rolemsg = "We were unable to determine your year of study. Please contact an admin to have a year role assigned to you."
             if cog is not None:
                 if email.lower() in cog.students["ca"]:
                     rolemsg = "We've automatically determined you as a CA1 student. If this is an error, you can correct this by contacting an admin."
