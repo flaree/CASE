@@ -326,42 +326,43 @@ class Verify(commands.Cog):
     @commands.admin()
     async def recheck(self, ctx):
         """Recheck users roles."""
-        rolesa = {
-            "case4": ctx.guild.get_role(713541535085494312),
-            "case3": ctx.guild.get_role(713541403904442438),
-            "case2": ctx.guild.get_role(713539660936118282),
-            "ca": ctx.guild.get_role(713538655817564250),
-            "case": ctx.guild.get_role(713538335984975943),
-        }
-        msg = ""
-        for user in ctx.guild.members:
-            if not await self.config.user(user).verified():
-                continue
-            email = await self.config.user(user).email()
-            cogs = self.bot.get_cog("Students")
-            roles = []
-            if cogs is not None:
-                if email.lower() in cogs.students["ca"]:
-                    roles.append(rolesa["ca"])
-                    roles.append(rolesa["case"])
-                elif email.lower() in cogs.students["case2"]:
+        async with ctx.typing():
+            rolesa = {
+                "case4": ctx.guild.get_role(713541535085494312),
+                "case3": ctx.guild.get_role(713541403904442438),
+                "case2": ctx.guild.get_role(713539660936118282),
+                "ca": ctx.guild.get_role(713538655817564250),
+                "case": ctx.guild.get_role(713538335984975943),
+            }
+            msg = ""
+            for user in ctx.guild.members:
+                if not await self.config.user(user).verified():
+                    continue
+                email = await self.config.user(user).email()
+                cogs = self.bot.get_cog("Students")
+                roles = []
+                if cogs is not None:
+                    if email.lower() in cogs.students["ca"]:
+                        roles.append(rolesa["ca"])
+                        roles.append(rolesa["case"])
+                    elif email.lower() in cogs.students["case2"]:
 
-                    roles.append(rolesa["case2"])
-                    roles.append(rolesa["case"])
-                elif email.lower() in cogs.students["case3"]:
+                        roles.append(rolesa["case2"])
+                        roles.append(rolesa["case"])
+                    elif email.lower() in cogs.students["case3"]:
 
-                    roles.append(rolesa["case3"])
-                    roles.append(rolesa["case"])
-                elif email.lower() in cogs.students["case4"]:
+                        roles.append(rolesa["case3"])
+                        roles.append(rolesa["case"])
+                    elif email.lower() in cogs.students["case4"]:
 
-                    roles.append(rolesa["case4"])
-                    roles.append(rolesa["case"])
-            if roles:
-                await user.add_roles(*roles, reason="updated")
-                await user.remove_roles(*list(rolesa.values()))
-                msg += f"Updated {user}s roles - New roles: {','.join([x.name for x in roles])}\n"
-        if msg:
-            for page in pagify(msg):
-                await ctx.send(page)
-        else:
-            await ctx.send("No users updated")
+                        roles.append(rolesa["case4"])
+                        roles.append(rolesa["case"])
+                if roles:
+                    await user.add_roles(*roles, reason="updated")
+                    await user.remove_roles(*list(rolesa.values()))
+                    msg += f"Updated {user}s roles - New roles: {','.join([x.name for x in roles])}\n"
+            if msg:
+                for page in pagify(msg):
+                    await ctx.send(page)
+            else:
+                await ctx.send("No users updated")
