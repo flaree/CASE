@@ -358,7 +358,7 @@ class Verify(commands.Cog):
                         roles.append(rolesa["case4"])
                         roles.append(rolesa["case"])
                 if roles:
-                    removed_roles = [role for role in user.roles if role not in roles and role in roles.values()]
+                    removed_roles = [role for role in user.roles if role not in roles and role in rolesa.values()]
                     await user.remove_roles(*removed_roles)
                     await user.add_roles(*roles, reason="updated")
                     msg += f"Updated {user}s roles - New roles: {','.join([x.name for x in roles])}\n"
