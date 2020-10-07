@@ -358,8 +358,8 @@ class Verify(commands.Cog):
                         roles.append(rolesa["case4"])
                         roles.append(rolesa["case"])
                 if roles:
-                    await user.add_roles(*roles, reason="updated")
                     await user.remove_roles(*list(rolesa.values()))
+                    await user.add_roles(*roles, reason="updated")
                     msg += f"Updated {user}s roles - New roles: {','.join([x.name for x in roles])}\n"
             if msg:
                 for page in pagify(msg):
