@@ -60,3 +60,29 @@ class Gamenotify(commands.Cog):
                 games[game] = []
                 games[game].append(ctx.author.id)
                 await ctx.send("That game has now been created and you have added to the ping list")
+
+    @commands.command()
+    @commands.guild_only()
+    async def listgames(self, ctx):
+        """List games for notifying."""
+        games = await self.config.guild(ctx.guild).games()
+        if not games:
+            await ctx.send("No games are registered in this guild silly.")
+            return
+        await ctx.send(f"Current registered games: {humanize_list(list(map(inline, games.keys())))}")
+
+    @commands.command()
+    @commands.guild_only()
+    async def listpings(self, ctx, *, game: str):
+        """List pings for a game."""
+        games = await self.config.guild(ctx.guild).games()
+        if game.lower() not in games:
+            await ctx.send("That game isn't registered for pings.")
+        users = []
+        for user in games[game.lower()]:
+            obj = ctx.guild.get_member(user)
+            if obj is not None:
+                users.append(str(obj))
+        if not users:
+            await ctx.send(f"No valid users registered for {game}.")
+        await ctx.send(f"Current registered users for {game}: {humanize_list(list(map(inline, users)))}")
