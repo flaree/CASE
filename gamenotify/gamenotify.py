@@ -55,7 +55,7 @@ class Gamenotify(commands.Cog):
                     await ctx.send("You have been removed from pings for this game.")
                 else:
                     games[game].append(ctx.author.id)
-                    await ctx.send("You have been added for pings for this game.")
+                    await ctx.send(f"You have been added to the ping list for {escape(game, mass_mentions=True)}.")
             else:
                 games[game] = []
                 games[game].append(ctx.author.id)
@@ -69,7 +69,11 @@ class Gamenotify(commands.Cog):
         if not games:
             await ctx.send("No games are registered in this guild silly.")
             return
-        await ctx.send(f"Current registered games: {humanize_list(list(map(inline, games.keys())))}")
+        new_games = [game for game in games if  games[game]]
+        if not new_games:
+            await ctx.send("No games are registered in this guild silly.")
+            return
+        await ctx.send(f"Current registered games: {humanize_list(list(map(inline, new_games)))}")
 
     @commands.command()
     @commands.guild_only()
@@ -78,6 +82,7 @@ class Gamenotify(commands.Cog):
         games = await self.config.guild(ctx.guild).games()
         if game.lower() not in games:
             await ctx.send("That game isn't registered for pings.")
+            return
         users = []
         for user in games[game.lower()]:
             obj = ctx.guild.get_member(user)
@@ -86,3 +91,16 @@ class Gamenotify(commands.Cog):
         if not users:
             await ctx.send(f"No valid users registered for {game}.")
         await ctx.send(f"Current registered users for {game}: {humanize_list(list(map(inline, users)))}")
+
+    @commands.command()
+    @commands.guild_only()
+    @commands.mod()
+    async def delgame(self, ctx, *, game: str):
+        """Deletea game."""
+        game = game.lower()
+        async with self.config.guild(ctx.guild).games() as games:
+            if game in games:
+                del games[game]
+                await ctx.send("That game has now deleted.")
+            else:
+                await ctx.send("That game does not exist.")
