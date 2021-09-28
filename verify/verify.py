@@ -39,6 +39,7 @@ class Verify(commands.Cog):
             "case2": guild.get_role(713539660936118282),
             "ca": guild.get_role(713538655817564250),
             "case": guild.get_role(713538335984975943),
+            "alumni": guild.get_role(713538175456247828),
         }
 
     def cog_unload(self):
@@ -155,6 +156,10 @@ class Verify(commands.Cog):
                 elif email.lower() in cog.students["case4"]:
                     rolemsg = "We've automatically determined you as a CASE4 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case4"])
+                    roles.append(self.roles["case"])
+                elif email.lower() in cog.students["alumni"]:
+                    rolemsg = "We've automatically determined you as an Alumni. If this is an error, you can correct this by contacting an admin."
+                    roles.append(self.roles["alumni"])
                     roles.append(self.roles["case"])
 
             # Add roles and greet
