@@ -58,9 +58,9 @@ class AutoTimetable(commands.Cog):
                 return
 
     async def post_timetables(self):
-        today = datetime.datetime.now().date()
-        
         dub = pytz.timezone("Europe/Dublin")
+        
+        today = datetime.datetime.now().astimezone(dub).date()
         if datetime.datetime.today().astimezone(dub).weekday() > 4:
             return
         for course in COURSES:
