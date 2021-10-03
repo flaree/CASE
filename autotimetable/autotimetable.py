@@ -60,6 +60,7 @@ class AutoTimetable(commands.Cog):
     async def post_timetables(self):
         today = datetime.datetime.now().date()
         if datetime.datetime.today().weekday() > 4:
+            print("weekday")
             return
         for course in COURSES:
             async with self.session.post(
