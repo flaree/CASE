@@ -98,5 +98,5 @@ class AutoTimetable(commands.Cog):
             embed.description = string
             guild = self.bot.get_guild(713522800081764392)
             channel = guild.get_channel(COURSES[course][0])
-            await channel.get_partial_message(COURSES[course][1])
-            await channel.edit(embed=embed)
+            msg = channel.get_partial_message(COURSES[course][1])
+            await msg.edit(embed=embed)
