@@ -84,7 +84,7 @@ class AutoTimetable(commands.Cog):
 
             embed = discord.Embed(title=f"Timetable for {course} for {today.strftime('%A')}")
             string = ""
-            for event_obj in sorted(timetable[0]["CategoryEvents"], lambda x: datetime.datetime.fromisoformat(x[0]["StartDateTime"])):
+            for event_obj in sorted(timetable[0]["CategoryEvents"], key=lambda x: datetime.datetime.fromisoformat(x[0]["StartDateTime"])):
                 start = datetime.datetime.fromisoformat(event_obj["StartDateTime"]).astimezone(dub)
                 test = datetime.datetime.fromisoformat("2021-10-04T08:00:00+00:00").astimezone(dub)
 
