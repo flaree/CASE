@@ -99,3 +99,4 @@ class AutoTimetable(commands.Cog):
             channel = guild.get_channel(COURSES[course][0])
             await channel.get_partial_message(COURSES[course][1])
             await channel.edit(embed=embed)
+            print(course)
