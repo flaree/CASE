@@ -2,10 +2,10 @@ import logging
 
 import discord
 from redbot.core import Config, bank, commands
-from redbot.core.utils.chat_formatting import humanize_number, inline, humanize_list , escape
-
+from redbot.core.utils.chat_formatting import escape, humanize_list, humanize_number, inline
 
 log = logging.getLogger("red.flare.gamenotify")
+
 
 class Gamenotify(commands.Cog):
     """Sub to game pings"""
@@ -21,7 +21,7 @@ class Gamenotify(commands.Cog):
         self.config = Config.get_conf(self, 95932766180343808, force_registration=True)
         self.config.register_guild(games={})
 
-    @commands.cooldown(1, 300, commands.BucketType.user)    
+    @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.command()
     @commands.guild_only()
     async def notify(self, ctx, *, game: str):
@@ -29,7 +29,9 @@ class Gamenotify(commands.Cog):
         game = game.lower()
         games = await self.config.guild(ctx.guild).games()
         if game not in games:
-            await ctx.send(f"That game doesn't exist, did you mean one of the following? {humanize_list(list(map(inline, games.keys())))}")
+            await ctx.send(
+                f"That game doesn't exist, did you mean one of the following? {humanize_list(list(map(inline, games.keys())))}"
+            )
             return
         users = []
         for user in games[game]:
@@ -55,11 +57,15 @@ class Gamenotify(commands.Cog):
                     await ctx.send("You have been removed from pings for this game.")
                 else:
                     games[game].append(ctx.author.id)
-                    await ctx.send(f"You have been added to the ping list for {escape(game, mass_mentions=True)}.")
+                    await ctx.send(
+                        f"You have been added to the ping list for {escape(game, mass_mentions=True)}."
+                    )
             else:
                 games[game] = []
                 games[game].append(ctx.author.id)
-                await ctx.send("That game has now been created and you have added to the ping list")
+                await ctx.send(
+                    "That game has now been created and you have added to the ping list"
+                )
 
     @commands.command()
     @commands.guild_only()
@@ -69,7 +75,7 @@ class Gamenotify(commands.Cog):
         if not games:
             await ctx.send("No games are registered in this guild silly.")
             return
-        new_games = [game for game in games if  games[game]]
+        new_games = [game for game in games if games[game]]
         if not new_games:
             await ctx.send("No games are registered in this guild silly.")
             return
@@ -90,7 +96,9 @@ class Gamenotify(commands.Cog):
                 users.append(str(obj))
         if not users:
             await ctx.send(f"No valid users registered for {game}.")
-        await ctx.send(f"Current registered users for {game}: {humanize_list(list(map(inline, users)))}")
+        await ctx.send(
+            f"Current registered users for {game}: {humanize_list(list(map(inline, users)))}"
+        )
 
     @commands.command()
     @commands.guild_only()

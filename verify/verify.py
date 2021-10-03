@@ -1,16 +1,16 @@
-import aiosmtplib
-from email.message import EmailMessage
-from redbot.core import Config, commands
-from redbot.core.data_manager import bundled_data_path, cog_data_path
-from redbot.core.utils.predicates import MessagePredicate
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
-from redbot.core.utils.chat_formatting import pagify
-
 import asyncio
 import json
-import secrets
-import discord
 import random
+import secrets
+from email.message import EmailMessage
+
+import aiosmtplib
+import discord
+from redbot.core import Config, commands
+from redbot.core.data_manager import bundled_data_path, cog_data_path
+from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
+from redbot.core.utils.predicates import MessagePredicate
 
 
 def chunks(l, n):
@@ -363,10 +363,16 @@ class Verify(commands.Cog):
                         roles.append(rolesa["case4"])
                         roles.append(rolesa["case"])
                 if roles:
-                    removed_roles = [role for role in user.roles if role not in roles and role in rolesa.values()]
+                    removed_roles = [
+                        role
+                        for role in user.roles
+                        if role not in roles and role in rolesa.values()
+                    ]
                     await user.remove_roles(*removed_roles)
                     await user.add_roles(*roles, reason="updated")
-                    msg += f"Updated {user}s roles - New roles: {','.join([x.name for x in roles])}\n"
+                    msg += (
+                        f"Updated {user}s roles - New roles: {','.join([x.name for x in roles])}\n"
+                    )
             if msg:
                 for page in pagify(msg):
                     await ctx.send(page)
