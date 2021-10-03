@@ -59,8 +59,9 @@ class AutoTimetable(commands.Cog):
 
     async def post_timetables(self):
         today = datetime.datetime.now().date()
-        if datetime.datetime.today().weekday() > 4:
-            print("weekday")
+        
+        dub = pytz.timezone("Europe/Dublin")
+        if datetime.datetime.today().astimezone(dub).weekday() > 4:
             return
         for course in COURSES:
             async with self.session.post(
@@ -84,7 +85,6 @@ class AutoTimetable(commands.Cog):
             embed = discord.Embed(title=f"Timetable for {course} for {today.strftime('%A')}")
             string = ""
             for event_obj in timetable[0]["CategoryEvents"]:
-                dub = pytz.timezone("Europe/Dublin")
                 start = datetime.datetime.fromisoformat(event_obj["StartDateTime"]).astimezone(dub)
                 test = datetime.datetime.fromisoformat("2021-10-04T08:00:00+00:00").astimezone(dub)
 
@@ -100,4 +100,3 @@ class AutoTimetable(commands.Cog):
             channel = guild.get_channel(COURSES[course][0])
             await channel.get_partial_message(COURSES[course][1])
             await channel.edit(embed=embed)
-            print(course)
