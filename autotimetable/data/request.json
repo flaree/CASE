@@ -1,0 +1,117 @@
+{
+    "ViewOptions": {
+      "Days": [
+        {
+          "Name": "Monday",
+          "DayOfWeek": 1,
+          "IsDefault": true
+        }
+      ],
+      "Weeks": [
+        {
+          "WeekNumber": 1,
+          "WeekLabel": "1",
+          "FirstDayInWeek": "2021-09-20T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 2,
+          "WeekLabel": "2",
+          "FirstDayInWeek": "2021-09-27T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 3,
+          "WeekLabel": "3",
+          "FirstDayInWeek": "2021-10-04T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 4,
+          "WeekLabel": "4",
+          "FirstDayInWeek": "2021-10-11T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 5,
+          "WeekLabel": "5",
+          "FirstDayInWeek": "2021-10-18T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 6,
+          "WeekLabel": "6",
+          "FirstDayInWeek": "2021-10-25T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 7,
+          "WeekLabel": "7",
+          "FirstDayInWeek": "2021-11-01T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 8,
+          "WeekLabel": "8",
+          "FirstDayInWeek": "2021-11-08T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 9,
+          "WeekLabel": "9",
+          "FirstDayInWeek": "2021-11-15T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 10,
+          "WeekLabel": "10",
+          "FirstDayInWeek": "2021-11-22T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 11,
+          "WeekLabel": "11",
+          "FirstDayInWeek": "2021-11-29T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 12,
+          "WeekLabel": "12",
+          "FirstDayInWeek": "2021-12-06T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 13,
+          "WeekLabel": "13",
+          "FirstDayInWeek": "2021-12-13T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 14,
+          "WeekLabel": "14",
+          "FirstDayInWeek": "2021-12-20T00:00:00.000Z"
+        },
+        {
+          "WeekNumber": 15,
+          "WeekLabel": "15",
+          "FirstDayInWeek": "2021-12-27T00:00:00.000Z"
+        }
+      ],
+      "TimePeriods": [
+        {
+          "Description": "All Day",
+          "StartTime": "08:00",
+          "EndTime": "22:00",
+          "IsDefault": true
+        }
+      ],
+      "DatePeriods": [
+        {
+          "Description": "All Year",
+          "StartDateTime": "2021-09-20T00:00:00.000Z",
+          "EndDateTime": "2022-09-20T00:00:00.000Z",
+          "IsDefault": false,
+          "IsThisWeek": false,
+          "IsNextWeek": false,
+          "Type": null
+        }
+      ],
+      "LegendItems": [],
+      "InstitutionConfig": {},
+      "DateConfig": {
+        "FirstDayInWeek": 1,
+        "StartDate": "2021-09-20T00:00:00+00:00",
+        "EndDate": "2022-09-20T00:00:00+00:00"
+      }
+    },
+    "CategoryIdentities": [
+      "3b57818e-d34a-fe27-62d7-76ab6d97d1af"
+    ]
+  }
