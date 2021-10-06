@@ -96,7 +96,7 @@ class AutoTimetable(commands.Cog):
 
                 string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']}\n\n"
             embed.description = string
-            guild = self.bot.get_guild(397040193720287243) # (713522800081764392)
+            guild = self.bot.get_guild(713522800081764392)
             channel = guild.get_channel(COURSES[course][0])
             msg = channel.get_partial_message(COURSES[course][1])
             await msg.edit(embed=embed)
