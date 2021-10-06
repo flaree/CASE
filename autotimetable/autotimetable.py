@@ -24,6 +24,10 @@ COURSES = {
     "CASE4": [889594398613069874, 894239034304507914],
 }
 
+# COURSES = {
+#     "CASE4": [693451350775955518, 894237583649935470]
+# }
+
 
 class AutoTimetable(commands.Cog):
     def __init__(self, bot):
@@ -42,20 +46,19 @@ class AutoTimetable(commands.Cog):
 
     async def initialise(self):
         await self.bot.wait_until_ready()
+        dub = pytz.timezone("Europe/Dublin")
         with contextlib.suppress(RuntimeError):
             while self == self.bot.get_cog(
                 self.__class__.__name__
             ):  # Stops the loop when the cog is reloaded
-                now = datetime.datetime.now()
-                tomorrow = (now + datetime.timedelta(days=1)).replace(
-                    hour=0, minute=0, second=0, microsecond=0
-                )
-                await asyncio.sleep((tomorrow - now).total_seconds())
                 try:
                     await self.post_timetables()
                 except Exception as e:
                     print(e)
-                return
+                now = datetime.datetime.now().astimezone(dub)
+                tomorrow = (now + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+                
+                await asyncio.sleep((tomorrow - now).total_seconds())
 
     async def post_timetables(self):
         dub = pytz.timezone("Europe/Dublin")
@@ -81,13 +84,10 @@ class AutoTimetable(commands.Cog):
                 if req.status != 200:
                     continue
                 timetable = await req.json()
-
             embed = discord.Embed(title=f"Timetable for {course} for {today.strftime('%A')}")
             string = ""
             for event_obj in sorted(timetable[0]["CategoryEvents"], key=lambda x: datetime.datetime.fromisoformat(x["StartDateTime"])):
                 start = datetime.datetime.fromisoformat(event_obj["StartDateTime"]).astimezone(dub)
-                test = datetime.datetime.fromisoformat("2021-10-04T08:00:00+00:00").astimezone(dub)
-
                 if start.date() != today:  # datetime.datetime.now().date():
                     # print(f"{start} not today")
                     continue
@@ -96,7 +96,7 @@ class AutoTimetable(commands.Cog):
 
                 string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']}\n\n"
             embed.description = string
-            guild = self.bot.get_guild(713522800081764392)
+            guild = self.bot.get_guild(397040193720287243) # (713522800081764392)
             channel = guild.get_channel(COURSES[course][0])
             msg = channel.get_partial_message(COURSES[course][1])
             await msg.edit(embed=embed)

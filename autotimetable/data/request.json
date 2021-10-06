@@ -5,8 +5,29 @@
           "Name": "Monday",
           "DayOfWeek": 1,
           "IsDefault": true
+        },
+        {
+          "Name": "Tuesday",
+          "DayOfWeek": 2,
+          "IsDefault": true
+        },
+        {
+          "Name": "Wednesday",
+          "DayOfWeek": 3,
+          "IsDefault": true
+        },
+        {
+          "Name": "Thursday",
+          "DayOfWeek": 4,
+          "IsDefault": true
+        },
+        {
+          "Name": "Friday",
+          "DayOfWeek": 5,
+          "IsDefault": true
         }
       ],
+  
       "Weeks": [
         {
           "WeekNumber": 1,
