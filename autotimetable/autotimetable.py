@@ -24,8 +24,11 @@ COURSES = {
     "CASE4": [889594398613069874, 894239034304507914],
 }
 
+GUILD = 713522800081764392
+# GUILD = 397040193720287243
+
 # COURSES = {
-#     "CASE4": [693451350775955518, 894237583649935470]
+#     "CASE4": [693451350775955518, 898944947938529320]
 # }
 
 
@@ -56,16 +59,19 @@ class AutoTimetable(commands.Cog):
                 except Exception as e:
                     print(e)
                 now = datetime.datetime.now().astimezone(dub)
-                tomorrow = (now + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
-                
+                tomorrow = (now + datetime.timedelta(days=1)).replace(hour=20, minute=0, second=0, microsecond=0)
                 await asyncio.sleep((tomorrow - now).total_seconds())
 
     async def post_timetables(self):
         dub = pytz.timezone("Europe/Dublin")
-        
-        today = datetime.datetime.now().astimezone(dub).date()
-        if datetime.datetime.today().astimezone(dub).weekday() > 4:
-            return
+        timedel = (datetime.datetime.now()  + datetime.timedelta(days=1)).astimezone(dub)
+        today = timedel.date()
+        if timedel.weekday() == 5:
+            timedel = (datetime.datetime.now()  + datetime.timedelta(days=3)).astimezone(dub)
+            today = timedel.date()
+        elif timedel.weekday() == 6:
+            timedel = (datetime.datetime.now()  + datetime.timedelta(days=2)).astimezone(dub)
+            today = timedel.date()
         for course in COURSES:
             async with self.session.post(
                 f"https://opentimetable.dcu.ie/broker/api/CategoryTypes/241e4d36-60e0-49f8-b27e-99416745d98d/Categories/Filter?pageNumber=1&query={course}",
@@ -96,7 +102,7 @@ class AutoTimetable(commands.Cog):
 
                 string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']}\n\n"
             embed.description = string
-            guild = self.bot.get_guild(713522800081764392)
+            guild = self.bot.get_guild(GUILD)
             channel = guild.get_channel(COURSES[course][0])
             msg = channel.get_partial_message(COURSES[course][1])
             await msg.edit(embed=embed)
