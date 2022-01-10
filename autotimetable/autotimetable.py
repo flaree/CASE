@@ -62,16 +62,19 @@ class AutoTimetable(commands.Cog):
                 tomorrow = (now + datetime.timedelta(days=1)).replace(hour=20, minute=0, second=0, microsecond=0)
                 await asyncio.sleep((tomorrow - now).total_seconds())
 
-    async def post_timetables(self):
+    async def post_timetables(self, *, skip=False):
         dub = pytz.timezone("Europe/Dublin")
-        timedel = (datetime.datetime.now()  + datetime.timedelta(days=1)).astimezone(dub)
-        today = timedel.date()
-        if timedel.weekday() == 5:
-            timedel = (datetime.datetime.now()  + datetime.timedelta(days=3)).astimezone(dub)
+        if not skip:
+            timedel = (datetime.datetime.now()  + datetime.timedelta(days=1)).astimezone(dub)
             today = timedel.date()
-        elif timedel.weekday() == 6:
-            timedel = (datetime.datetime.now()  + datetime.timedelta(days=2)).astimezone(dub)
-            today = timedel.date()
+            if timedel.weekday() == 5:
+                timedel = (datetime.datetime.now()  + datetime.timedelta(days=3)).astimezone(dub)
+                today = timedel.date()
+            elif timedel.weekday() == 6:
+                timedel = (datetime.datetime.now()  + datetime.timedelta(days=2)).astimezone(dub)
+                today = timedel.date()
+        else:
+            today = datetime.datetime.now().astimezone(dub).date()
         for course in COURSES:
             async with self.session.post(
                 f"https://opentimetable.dcu.ie/broker/api/CategoryTypes/241e4d36-60e0-49f8-b27e-99416745d98d/Categories/Filter?pageNumber=1&query={course}",
