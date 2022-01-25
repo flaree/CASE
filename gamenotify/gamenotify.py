@@ -33,6 +33,9 @@ class Gamenotify(commands.Cog):
                 f"That game doesn't exist, did you mean one of the following? {humanize_list(list(map(inline, games.keys())))}"
             )
             return
+        if ctx.author.id not in games[game]:
+            await ctx.send(f"You must be signed up for {game} pings in order to notify it's other members.")
+            return
         users = []
         for user in games[game]:
             obj = ctx.guild.get_member(user)
