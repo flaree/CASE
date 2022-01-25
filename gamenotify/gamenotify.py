@@ -28,6 +28,10 @@ class Gamenotify(commands.Cog):
         """Ping a game."""
         game = game.lower()
         games = await self.config.guild(ctx.guild).games()
+
+        if ctx.author.id not in games[game]:
+            return await ctx.send("You are not subscribed to this game.")
+            
         if game not in games:
             await ctx.send(
                 f"That game doesn't exist, did you mean one of the following? {humanize_list(list(map(inline, games.keys())))}"
