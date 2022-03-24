@@ -235,7 +235,8 @@ class Verify(commands.Cog):
         message["From"] = "casediscord@gmail.com"
         message["To"] = email
         message["Subject"] = "Discord Verification"
-        message.set_content(code)
+        content = f"Your verification code for the CASE++ server is:\n{code}"
+        message.set_content(content)
         await aiosmtplib.send(
             message,
             recipients=[email],
