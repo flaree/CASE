@@ -77,7 +77,7 @@ class Verify(commands.Cog):
 
     @commands.group()
     async def unverify(self, ctx):
-        """Unverification process : )"""
+        """Unverification process"""
         pass
 
     @unverify.command(name="me")
