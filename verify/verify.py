@@ -164,6 +164,8 @@ class Verify(commands.Cog):
             # Check a the SoC API for course
             user_year = await self.get_course_year(email.lower())
 
+            rolemsg = ""
+            
             if type(user_year) != dict:
                 rolemsg = "We were unable to determine your year of study. Please contact an admin to have a year role assigned to you."
             else:
