@@ -1,4 +1,6 @@
 import asyncio
+
+from pytz.exceptions import Error
 import aiohttp
 import json
 import random
@@ -56,10 +58,9 @@ class Verify(commands.Cog):
         ) as req:
             if req.status != 200:
                 return
-            resp = (await req.json())
             try:
-                data = json.loads(resp)
-            except ValueError as e:
+                resp = (await req.json())
+            except Exception as e:
                 return False
             return data
 
