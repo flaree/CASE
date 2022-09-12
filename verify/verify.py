@@ -410,3 +410,56 @@ class Verify(commands.Cog):
                     await ctx.send(page)
             else:
                 await ctx.send("No users updated")
+
+    @commands.command()
+    async def fixroles(self, ctx):
+        """Recheck specific roles."""
+        async with ctx.typing():
+            rolesa = {
+                "case4": ctx.guild.get_role(713541403904442438),
+                "case3": ctx.guild.get_role(713539660936118282),
+                "case2": ctx.guild.get_role(713538655817564250),
+                "ca": ctx.guild.get_role(713541535085494312),
+                "case": ctx.guild.get_role(713538335984975943),
+            }
+            msg = ""
+            user = ctx.message.author
+
+            if not await self.config.user(user).verified():
+                return await ctx.send("Unfortunately we do not have your account data on record. Please re-verify or contact an Admin for roles.")
+            email = await self.config.user(user).email()
+
+            user_year = await self.get_course_year(email.lower())
+            roles = []
+
+            if type(user_year) != dict:
+                msg = ""
+            else:
+                if user_year['course'] == "COMSCI1":
+                    roles.append(rolesa["ca"])
+                    roles.append(rolesa["case"])
+                elif user_year['course'] == "COMSCI2":
+                    roles.append(rolesa["case2"])
+                    roles.append(rolesa["case"])
+                elif user_year['course'] == "CASE3":
+                    roles.append(rolesa["case3"])
+                    roles.append(rolesa["case"])
+                elif user_year['course'] == "CASE4":
+                    roles.append(rolesa["case4"])
+                    roles.append(rolesa["case"])
+
+            if roles:
+                removed_roles = [
+                    role
+                    for role in user.roles
+                    if role not in roles and role in rolesa.values()
+                ]
+                await user.remove_roles(*removed_roles)
+                await user.add_roles(*roles, reason="updated")
+                msg += (
+                    f"Updated {user}s roles - New roles: {', '.join([x.name for x in roles])}\n"
+                )
+            if msg:
+                await ctx.send(msg)
+            else:
+                await ctx.send("An error occured while fetching your data. Please contact an Admin.")
