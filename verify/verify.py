@@ -38,10 +38,10 @@ class Verify(commands.Cog):
         await self.bot.wait_until_red_ready()
         guild = self.bot.get_guild(713522800081764392)
         self.roles = {
-            "case4": guild.get_role(713541535085494312),
+            "case4": guild.get_role(713541403904442438),
             "case3": guild.get_role(713541403904442438),
             "case2": guild.get_role(713539660936118282),
-            "ca": guild.get_role(713538655817564250),
+            "ca": guild.get_role(713541535085494312),
             "case": guild.get_role(713538335984975943),
             "alumni": guild.get_role(713538175456247828),
         }
@@ -360,10 +360,10 @@ class Verify(commands.Cog):
         """Recheck users roles."""
         async with ctx.typing():
             rolesa = {
-                "case4": ctx.guild.get_role(713541535085494312),
+                "case4": ctx.guild.get_role(713541403904442438),
                 "case3": ctx.guild.get_role(713541403904442438),
                 "case2": ctx.guild.get_role(713539660936118282),
-                "ca": ctx.guild.get_role(713538655817564250),
+                "ca": ctx.guild.get_role(713541535085494312),
                 "case": ctx.guild.get_role(713538335984975943),
             }
             msg = ""
