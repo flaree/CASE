@@ -49,7 +49,7 @@ class Verify(commands.Cog):
 
     async def get_course_year(self, email):
         """Fetch a user's course year via the SoC API"""
-        async with self.session.post(
+        async with self.session.get(
             f"https://ws.computing.dcu.ie/api/v1/course/{email}",
             headers=ReqHeaders,
         ) as req:
