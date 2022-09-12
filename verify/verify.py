@@ -62,7 +62,7 @@ class Verify(commands.Cog):
                 resp = (await req.json())
             except Exception as e:
                 return False
-            return data
+            return resp
 
     def cog_unload(self):
         if self._init_task:
