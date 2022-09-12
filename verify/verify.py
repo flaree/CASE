@@ -13,9 +13,6 @@ from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import MessagePredicate
 
-ReqHeaders = {
-    "x-api-key": "SOC_API_KEY"
-}
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
@@ -46,12 +43,16 @@ class Verify(commands.Cog):
             "case": guild.get_role(713538335984975943),
             "alumni": guild.get_role(713538175456247828),
         }
+        tokens = await self.bot.get_shared_api_tokens("CASE")
+        self.ReqHeaders = {
+            "x-api-key": tokens.get("SOC_API_TOKEN")
+        }
 
     async def get_course_year(self, email):
         """Fetch a user's course year via the SoC API"""
         async with self.session.get(
             f"https://ws.computing.dcu.ie/api/v1/course/{email}",
-            headers=ReqHeaders,
+            headers=self.ReqHeaders,
         ) as req:
             if req.status != 200:
                 return
