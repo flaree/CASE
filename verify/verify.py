@@ -160,28 +160,28 @@ class Verify(commands.Cog):
             roles.append(role)
 
             # Check a the SoC API for course
-            user_year = get_course_year(email.lower())
+            user_year = self.get_course_year(email.lower())
 
             if not user_year:
                 rolemsg = "We were unable to determine your year of study. Please contact an admin to have a year role assigned to you."
             else:
-                if user_year.course == "COMSCI1":
+                if user_year['course'] == "COMSCI1":
                     rolemsg = "We've automatically determined you as a COMSCI1 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["ca"])
                     roles.append(self.roles["case"])
-                elif user_year.course == "COMSCI2":
+                elif user_year['course'] == "COMSCI2":
                     rolemsg = "We've automatically determined you as a COMSCI2 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case2"])
                     roles.append(self.roles["case"])
-                elif user_year.course == "CASE3":
+                elif user_year['course'] == "CASE3":
                     rolemsg = "We've automatically determined you as a CASE3 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case3"])
                     roles.append(self.roles["case"])
-                elif user_year.course == "CASE4":
+                elif user_year['course'] == "CASE4":
                     rolemsg = "We've automatically determined you as a CASE4 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case4"])
                     roles.append(self.roles["case"])
-                elif user_year.course == "CASE":
+                elif user_year['course'] == "CASE":
                     rolemsg = "We've automatically determined you as an Alumni. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["alumni"])
                     roles.append(self.roles["case"])
@@ -371,22 +371,22 @@ class Verify(commands.Cog):
                 email = await self.config.user(user).email()
 
                 # Check a the SoC API for course
-                user_year = get_course_year(email.lower())
+                user_year = self.get_course_year(email.lower())
                 roles = []
 
                 if not user_year:
                     msg = ""
                 else:
-                    if user_year.course == "COMSCI1":
+                    if user_year['course'] == "COMSCI1":
                         roles.append(rolesa["ca"])
                         roles.append(rolesa["case"])
-                    elif user_year.course == "COMSCI2":
+                    elif user_year['course'] == "COMSCI2":
                         roles.append(rolesa["case2"])
                         roles.append(rolesa["case"])
-                    elif user_year.course == "CASE3":
+                    elif user_year['course'] == "CASE3":
                         roles.append(rolesa["case3"])
                         roles.append(rolesa["case"])
-                    elif user_year.course == "CASE4":
+                    elif user_year['course'] == "CASE4":
                         roles.append(rolesa["case4"])
                         roles.append(rolesa["case"])
 
