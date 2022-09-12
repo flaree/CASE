@@ -80,7 +80,7 @@ class Verify(commands.Cog):
         """Unverification process : )"""
         pass
 
-    @unverify.command("me")
+    @unverify.command(name="me")
     async def unverify(self, ctx):
         """Unverify yourself"""
         user = ctx.message.author
@@ -95,7 +95,7 @@ class Verify(commands.Cog):
         await self.config.user(user).email.set(None)
         await ctx.send("You have been un-verified. To re-verify DM me with `.verify email your_dcu_email_here` or contact an Admin.")
 
-    @unverify.command("user")
+    @unverify.command(name="user")
     @commands.admin()
     async def unverify(self, ctx, *, user: discord.User):
         """Unverify someone"""
