@@ -1,4 +1,5 @@
 import asyncio
+import aiohttp
 import json
 import random
 import secrets
@@ -12,6 +13,9 @@ from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.menus import DEFAULT_CONTROLS, menu
 from redbot.core.utils.predicates import MessagePredicate
 
+ReqHeaders = {
+    "x-api-key": "SOC_API_KEY"
+}
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
@@ -22,6 +26,7 @@ def chunks(l, n):
 class Verify(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.session = aiohttp.ClientSession()
         self.config = Config.get_conf(self, identifier=95932766180343808, force_registration=True)
         self.config.register_global(
             username=None, password=None, verified_emails=[], welcome_messages=[]
@@ -42,9 +47,26 @@ class Verify(commands.Cog):
             "alumni": guild.get_role(713538175456247828),
         }
 
+    async def get_course_year(self, email):
+        """Fetch a user's course year via the SoC API"""
+        async with self.session.post(
+            f"https://ws.computing.dcu.ie/api/v1/course/{email}",
+            headers=ReqHeaders,
+        ) as req:
+            if req.status != 200:
+                return
+            resp = (await req.json())
+            try:
+                data = json.loads(resp)
+            except ValueError as e:
+                return False
+            return data
+
     def cog_unload(self):
         if self._init_task:
             self._init_task.cancel()
+        self.bot.loop.create_task(self.session.close())
+        self.loop.cancel()
 
     @commands.command()
     @commands.admin()
@@ -137,27 +159,29 @@ class Verify(commands.Cog):
                 await user.edit(nick=name)
             roles.append(role)
 
-            # Check a private cog with student data.
-            cog = self.bot.get_cog("Students")
-            rolemsg = "We were unable to determine your year of study. Please contact an admin to have a year role assigned to you."
-            if cog is not None:
-                if email.lower() in cog.students["ca"]:
-                    rolemsg = "We've automatically determined you as a CA1 student. If this is an error, you can correct this by contacting an admin."
+            # Check a the SoC API for course
+            user_year = get_course_year(email.lower())
+
+            if not user_year:
+                rolemsg = "We were unable to determine your year of study. Please contact an admin to have a year role assigned to you."
+            else:
+                if user_year.course == "COMSCI1":
+                    rolemsg = "We've automatically determined you as a COMSCI1 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["ca"])
                     roles.append(self.roles["case"])
-                elif email.lower() in cog.students["case2"]:
-                    rolemsg = "We've automatically determined you as a CASE2 student. If this is an error, you can correct this by contacting an admin."
+                elif user_year.course == "COMSCI2":
+                    rolemsg = "We've automatically determined you as a COMSCI2 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case2"])
                     roles.append(self.roles["case"])
-                elif email.lower() in cog.students["case3"]:
+                elif user_year.course == "CASE3":
                     rolemsg = "We've automatically determined you as a CASE3 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case3"])
                     roles.append(self.roles["case"])
-                elif email.lower() in cog.students["case4"]:
+                elif user_year.course == "CASE4":
                     rolemsg = "We've automatically determined you as a CASE4 student. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["case4"])
                     roles.append(self.roles["case"])
-                elif email.lower() in cog.students["alumni"]:
+                elif user_year.course == "CASE":
                     rolemsg = "We've automatically determined you as an Alumni. If this is an error, you can correct this by contacting an admin."
                     roles.append(self.roles["alumni"])
                     roles.append(self.roles["case"])
@@ -345,24 +369,27 @@ class Verify(commands.Cog):
                 if not await self.config.user(user).verified():
                     continue
                 email = await self.config.user(user).email()
-                cogs = self.bot.get_cog("Students")
+
+                # Check a the SoC API for course
+                user_year = get_course_year(email.lower())
                 roles = []
-                if cogs is not None:
-                    if email.lower() in cogs.students["ca"]:
+
+                if not user_year:
+                    msg = ""
+                else:
+                    if user_year.course == "COMSCI1":
                         roles.append(rolesa["ca"])
                         roles.append(rolesa["case"])
-                    elif email.lower() in cogs.students["case2"]:
-
+                    elif user_year.course == "COMSCI2":
                         roles.append(rolesa["case2"])
                         roles.append(rolesa["case"])
-                    elif email.lower() in cogs.students["case3"]:
-
+                    elif user_year.course == "CASE3":
                         roles.append(rolesa["case3"])
                         roles.append(rolesa["case"])
-                    elif email.lower() in cogs.students["case4"]:
-
+                    elif user_year.course == "CASE4":
                         roles.append(rolesa["case4"])
                         roles.append(rolesa["case"])
+
                 if roles:
                     removed_roles = [
                         role
