@@ -160,7 +160,7 @@ class Verify(commands.Cog):
             roles.append(role)
 
             # Check a the SoC API for course
-            user_year = self.get_course_year(email.lower())
+            user_year = await self.get_course_year(email.lower())
 
             if not user_year:
                 rolemsg = "We were unable to determine your year of study. Please contact an admin to have a year role assigned to you."
@@ -371,7 +371,7 @@ class Verify(commands.Cog):
                 email = await self.config.user(user).email()
 
                 # Check a the SoC API for course
-                user_year = self.get_course_year(email.lower())
+                user_year = await self.get_course_year(email.lower())
                 roles = []
 
                 if not user_year:
