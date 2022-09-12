@@ -77,11 +77,11 @@ class Verify(commands.Cog):
 
     @commands.group()
     async def unverify(self, ctx):
-        """Unverification process"""
+        """Unverification process : )"""
         pass
 
     @unverify.command(name="me")
-    async def unverify(self, ctx):
+    async def unverify_self(self, ctx):
         """Unverify yourself"""
         user = ctx.message.author
         data = await self.config.user(user).all()
@@ -97,7 +97,7 @@ class Verify(commands.Cog):
 
     @unverify.command(name="user")
     @commands.admin()
-    async def unverify(self, ctx, *, user: discord.User):
+    async def unverify_user(self, ctx, *, user: discord.User):
         """Unverify someone"""
         data = await self.config.user(user).all()
         if not data["verified"]:
