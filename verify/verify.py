@@ -98,7 +98,7 @@ class Verify(commands.Cog):
         await self.config.user(user).verified.set(False)
         await self.config.user(user).email.set(None)
         await user.remove_roles(*self.roles.values(), reason="Removed for unverification.")
-        await ctx.send("You have been un-verified. To re-verify DM me with `.verify email your_dcu_email_here` or contact an Admin.")
+        await user.send("You have been un-verified. To re-verify use the `.verify email your_dcu_email_here` command or contact an Admin.")
 
     @unverify.command(name="user")
     @commands.admin()
