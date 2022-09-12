@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 
 from pytz.exceptions import Error
 import aiohttp
@@ -38,6 +39,9 @@ class Verify(commands.Cog):
         await self.bot.wait_until_red_ready()
         guild = self.bot.get_guild(713522800081764392)
         self.roles = {
+            "external": guild.get_role(713538609017258025),
+            "visitor": guild.get_role(871146938525974569),
+            "verified": guild.get_role(713538570824187968),
             "case4": guild.get_role(713541403904442438),
             "case3": guild.get_role(713539660936118282),
             "case2": guild.get_role(713538655817564250),
@@ -93,6 +97,7 @@ class Verify(commands.Cog):
         await self.config.user(user).code.set(None)
         await self.config.user(user).verified.set(False)
         await self.config.user(user).email.set(None)
+        await user.remove_roles(*self.roles.values(), reason="Removed for unverification.")
         await ctx.send("You have been un-verified. To re-verify DM me with `.verify email your_dcu_email_here` or contact an Admin.")
 
     @unverify.command(name="user")
@@ -221,7 +226,9 @@ class Verify(commands.Cog):
                 f"User <@{user.id}> joined the server!",
                 allowed_mentions=discord.AllowedMentions(everyone=True),
             )
-            await general.send(random.choice(greeting_msgs).format(name=f"<@{user.id}>"))
+
+            if (datetime.utcnow() - user.joined_at).days < 7:
+                await general.send(random.choice(greeting_msgs).format(name=f"<@{user.id}>"))
 
         else:
             await ctx.send(
