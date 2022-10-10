@@ -51,9 +51,7 @@ class AutoTimetable(commands.Cog):
         await self.bot.wait_until_ready()
         dub = pytz.timezone("Europe/Dublin")
         with contextlib.suppress(RuntimeError):
-            while self == self.bot.get_cog(
-                self.__class__.__name__
-            ):  # Stops the loop when the cog is reloaded
+            while True:
                 try:
                     await self.post_timetables()
                 except Exception as e:
