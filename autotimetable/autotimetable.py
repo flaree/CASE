@@ -102,7 +102,7 @@ class AutoTimetable(commands.Cog):
                     end = datetime.datetime.fromisoformat(event_obj["EndDateTime"]).astimezone(dub)
                     duration = end - start
 
-                    string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']} - <t:{int(today.timestamp())}:R>\n\n"
+                    string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']} - <t:{int(today.strftime('%s'))}:R>\n\n"
                 if string == "":
                     string = f"No classes found for {today.strftime('%A')}"
                 embed.description = string
