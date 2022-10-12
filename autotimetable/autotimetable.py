@@ -91,7 +91,7 @@ class AutoTimetable(commands.Cog):
                 if req.status != 200:
                     continue
                 timetable = await req.json()
-            embed = discord.Embed(title=f"Timetable for {course} for {today.strftime('%A')}")
+            embed = discord.Embed(title=f"Timetable for {course} for {today.strftime('%A')} {today.strftime('%d/%m/%Y')}")
             string = ""
             for event_obj in sorted(timetable[0]["CategoryEvents"], key=lambda x: datetime.datetime.fromisoformat(x["StartDateTime"])):
                 start = datetime.datetime.fromisoformat(event_obj["StartDateTime"]).astimezone(dub)
@@ -101,7 +101,9 @@ class AutoTimetable(commands.Cog):
                 end = datetime.datetime.fromisoformat(event_obj["EndDateTime"]).astimezone(dub)
                 duration = end - start
 
-                string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']}\n\n"
+                string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']} - <t:{int(today.timestamp())}:R>\n\n"
+            if string == "":
+                string = f"No classes found for {today.strftime('%A')}"
             embed.description = string
             guild = self.bot.get_guild(GUILD)
             channel = guild.get_channel(COURSES[course][0])
