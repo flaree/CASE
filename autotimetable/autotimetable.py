@@ -61,51 +61,54 @@ class AutoTimetable(commands.Cog):
                 await asyncio.sleep((tomorrow - now).total_seconds())
 
     async def post_timetables(self, *, skip=False):
-        dub = pytz.timezone("Europe/Dublin")
-        if not skip:
-            timedel = (datetime.datetime.now()  + datetime.timedelta(days=1)).astimezone(dub)
-            today = timedel.date()
-            if timedel.weekday() == 5:
-                timedel = (datetime.datetime.now()  + datetime.timedelta(days=3)).astimezone(dub)
+        try:
+            dub = pytz.timezone("Europe/Dublin")
+            if not skip:
+                timedel = (datetime.datetime.now()  + datetime.timedelta(days=1)).astimezone(dub)
                 today = timedel.date()
-            elif timedel.weekday() == 6:
-                timedel = (datetime.datetime.now()  + datetime.timedelta(days=2)).astimezone(dub)
-                today = timedel.date()
-        else:
-            today = datetime.datetime.now().astimezone(dub).date()
-        for course in COURSES:
-            async with self.session.post(
-                f"https://opentimetable.dcu.ie/broker/api/CategoryTypes/241e4d36-60e0-49f8-b27e-99416745d98d/Categories/Filter?pageNumber=1&query={course}",
-                headers=ReqHeaders,
-            ) as req:
-                if req.status != 200:
-                    continue
-                data = (await req.json())["Results"][0]["Identity"]
-            self.req_data["CategoryIdentities"][0] = data
+                if timedel.weekday() == 5:
+                    timedel = (datetime.datetime.now()  + datetime.timedelta(days=3)).astimezone(dub)
+                    today = timedel.date()
+                elif timedel.weekday() == 6:
+                    timedel = (datetime.datetime.now()  + datetime.timedelta(days=2)).astimezone(dub)
+                    today = timedel.date()
+            else:
+                today = datetime.datetime.now().astimezone(dub).date()
+            for course in COURSES:
+                async with self.session.post(
+                    f"https://opentimetable.dcu.ie/broker/api/CategoryTypes/241e4d36-60e0-49f8-b27e-99416745d98d/Categories/Filter?pageNumber=1&query={course}",
+                    headers=ReqHeaders,
+                ) as req:
+                    if req.status != 200:
+                        continue
+                    data = (await req.json())["Results"][0]["Identity"]
+                self.req_data["CategoryIdentities"][0] = data
 
-            async with self.session.post(
-                f"https://opentimetable.dcu.ie/broker/api/categoryTypes/241e4d36-60e0-49f8-b27e-99416745d98d/categories/events/filter",
-                headers=ReqHeaders,
-                json=self.req_data,
-            ) as req:
-                if req.status != 200:
-                    continue
-                timetable = await req.json()
-            embed = discord.Embed(title=f"Timetable for {course} for {today.strftime('%A')} {today.strftime('%d/%m/%Y')}")
-            string = ""
-            for event_obj in sorted(timetable[0]["CategoryEvents"], key=lambda x: datetime.datetime.fromisoformat(x["StartDateTime"])):
-                start = datetime.datetime.fromisoformat(event_obj["StartDateTime"]).astimezone(dub)
-                if start.date() != today:  # datetime.datetime.now().date():
-                    # print(f"{start} not today")
-                    continue
-                end = datetime.datetime.fromisoformat(event_obj["EndDateTime"]).astimezone(dub)
-                duration = end - start
+                async with self.session.post(
+                    f"https://opentimetable.dcu.ie/broker/api/categoryTypes/241e4d36-60e0-49f8-b27e-99416745d98d/categories/events/filter",
+                    headers=ReqHeaders,
+                    json=self.req_data,
+                ) as req:
+                    if req.status != 200:
+                        continue
+                    timetable = await req.json()
+                embed = discord.Embed(title=f"Timetable for {course} for {today.strftime('%A')} {today.strftime('%d/%m/%Y')}")
+                string = ""
+                for event_obj in sorted(timetable[0]["CategoryEvents"], key=lambda x: datetime.datetime.fromisoformat(x["StartDateTime"])):
+                    start = datetime.datetime.fromisoformat(event_obj["StartDateTime"]).astimezone(dub)
+                    if start.date() != today:  # datetime.datetime.now().date():
+                        # print(f"{start} not today")
+                        continue
+                    end = datetime.datetime.fromisoformat(event_obj["EndDateTime"]).astimezone(dub)
+                    duration = end - start
 
-                string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']} - <t:{int(today.timestamp())}:R>\n\n"
-            if string == "":
-                string = f"No classes found for {today.strftime('%A')}"
-            embed.description = string
-            guild = self.bot.get_guild(GUILD)
-            channel = guild.get_channel(COURSES[course][0])
-            msg = channel.get_partial_message(COURSES[course][1])
-            await msg.edit(embed=embed)
+                    string += f"**{event_obj['ExtraProperties'][0]['Value']}** | {start.strftime('%I:%M%p').lstrip('0')} - {end.strftime('%I:%M%p').lstrip('0')} - {duration.seconds // 3600}h \n{event_obj['Location']} - <t:{int(today.timestamp())}:R>\n\n"
+                if string == "":
+                    string = f"No classes found for {today.strftime('%A')}"
+                embed.description = string
+                guild = self.bot.get_guild(GUILD)
+                channel = guild.get_channel(COURSES[course][0])
+                msg = channel.get_partial_message(COURSES[course][1])
+                await msg.edit(embed=embed)
+        except Exception as e:
+            print(e)
